@@ -30,7 +30,7 @@
     "build": "14054515",
     "revision": "r563880c",
     "version": "21.0.0",
-    "archive_sha256": "8788ddf9fe44a9e91c3491d7da803c1165f2327e79c25fe254595cae77f460a7"
+    "content_tree_sha1": "571ed3e20b5708cea1177d5072853fc5b85b6877"
   },
   "baseline": {
     "kernel_release": "5.15.197-ga62400d531bc",
