@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "checks": [
+    "All Python scripts parse successfully",
+    "Baseline configuration SHA-256 matches lock",
+    "Unchanged baseline passes configuration gate",
+    "Disabling CFI is rejected before compilation",
+    "Modified baseline input is rejected by SHA-256",
+    "A failed/empty build produces truthful failure records and checksums"
+  ]
+}

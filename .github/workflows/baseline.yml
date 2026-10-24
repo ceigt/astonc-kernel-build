@@ -1,0 +1,64 @@
+name: astonc baseline kernel
+run-name: astonc baseline kernel (validation only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      jobs:
+        description: Compilation workers (Full LTO linking uses one thread)
+        type: choice
+        default: '2'
+        options: ['1', '2', '3', '4']
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/baseline.yml'
+      - 'scripts/**'
+      - 'configs/**'
+      - 'sources.lock.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: astonc-baseline-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  baseline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    env:
+      JOBS: ${{ inputs.jobs || '2' }}
+      KBUILD_BUILD_USER: build-user
+      KBUILD_BUILD_HOST: build-host
+      KBUILD_BUILD_VERSION: '1'
+      KBUILD_BUILD_TIMESTAMP: 'Tue Sep 1 23:02:16 WEST 2026'
+      SOURCE_DATE_EPOCH: '1788300136'
+      TZ: UTC
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out build definitions
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Prepare disposable Linux runner
+        run: bash scripts/prepare-runner.sh
+      - name: Fetch pinned sources and official toolchain
+        run: bash scripts/fetch.sh
+      - name: Validate configuration and build baseline
+        run: bash scripts/build.sh
+      - name: Collect logs and provenance
+        if: always()
+        run: python3 scripts/collect.py
+      - name: Save experimental kernel and verification records
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: astonc-baseline-validation-${{ github.run_number }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6

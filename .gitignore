@@ -1,0 +1,6 @@
+/src/
+/toolchain/
+/out/
+/artifacts/
+__pycache__/
+*.pyc
