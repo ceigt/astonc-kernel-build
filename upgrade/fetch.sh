@@ -28,6 +28,7 @@ echo "$(read_lock susfs local_patch_sha256)  upgrade/susfs-210-to-230.patch" | s
 git -C src/sm8550 apply --check "$PWD/upgrade/susfs-210-to-230.patch"
 git -C src/sm8550 apply "$PWD/upgrade/susfs-210-to-230.patch"
 git -C src/sm8550 diff --check
+python3 upgrade/verify-patch-scope.py
 git -C src/sm8550 diff --stat > artifacts/applied-kernel-changes.txt
 grep -Fx '#define SUSFS_VERSION "v2.3.0"' src/sm8550/include/linux/susfs.h
 [[ -f src/sm8550/drivers/kernelsu/Kconfig ]]

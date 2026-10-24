@@ -22,6 +22,7 @@ grep -E '^5\.15\.197-ksun342-susfs230-exp' artifacts/kernelrelease.txt
 printf '%s\n' 'Building experimental upgraded Image and in-tree modules; no boot image is generated.'
 # Keep Full LTO and CFI enabled. Limit linker concurrency rather than changing these options.
 # Compile changed core paths first to surface integration errors before Full LTO.
+make "${make_args[@]}" -j"${JOBS:-2}" net/netfilter/xt_DSCP.o
 make "${make_args[@]}" -j"${JOBS:-2}" drivers/kernelsu/ fs/ kernel/ mm/ security/ drivers/input/
 make "${make_args[@]}" -j"${JOBS:-2}" LD="$PWD/scripts/ld-lld-single-thread.sh" Image modules
 cp "$kernel_out/arch/arm64/boot/Image" artifacts/Image.experimental
