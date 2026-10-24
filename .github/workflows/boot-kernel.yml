@@ -1,0 +1,76 @@
+name: astonc boot kernel
+run-name: astonc KSU-Next 3.4.2+ / SUSFS 2.3.0 boot kernel
+
+on:
+  workflow_dispatch:
+    inputs:
+      jobs:
+        description: Compilation workers (Full LTO linking uses one thread)
+        type: choice
+        default: '2'
+        options: ['1', '2', '3', '4']
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/boot-kernel.yml'
+      - 'boot-build/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: astonc-boot-kernel-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    env:
+      JOBS: ${{ inputs.jobs || '2' }}
+      KBUILD_BUILD_USER: build-user
+      KBUILD_BUILD_HOST: build-host
+      KBUILD_BUILD_VERSION: '1'
+      KBUILD_BUILD_TIMESTAMP: 'Tue Sep 1 23:02:16 WEST 2026'
+      SOURCE_DATE_EPOCH: '1788300136'
+      TZ: UTC
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out build definitions
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Prepare disposable Linux runner
+        run: bash scripts/prepare-runner.sh
+      - name: Select pinned upgrade sources
+        run: cp boot-build/sources.lock.json sources.lock.json
+      - name: Restore official verified compiler cache
+        id: clang-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: toolchain/clang
+          key: astonc-clang-531a564b-571ed3e2-v1
+      - name: Fetch pinned sources and official toolchain
+        run: bash upgrade/fetch.sh
+      - name: Cache compiler after official content verification
+        if: steps.clang-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: toolchain/clang
+          key: astonc-clang-531a564b-571ed3e2-v1
+      - name: Validate configuration and compile upgraded kernel
+        run: bash boot-build/build.sh
+      - name: Collect logs and provenance
+        if: always()
+        run: python3 boot-build/collect.py
+      - name: Save kernel for local boot repack and verification records
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: astonc-boot-kernel-${{ github.run_number }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6

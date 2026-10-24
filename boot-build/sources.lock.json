@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "mode": "kernel-for-local-original-boot-repack",
+  "kernel": {
+    "url": "https://github.com/AlphaDroid-devices/kernel_oneplus_sm8550.git",
+    "commit": "a62400d531bc7c26747001eb3f7c9d505a94dbdf"
+  },
+  "kernelsu": {
+    "url": "https://github.com/pershoot/KernelSU-Next.git",
+    "commit": "d21e0a66c887ae4bc75b7c9f83e41761819ec09a",
+    "upstream_url": "https://github.com/KernelSU-Next/KernelSU-Next.git",
+    "upstream_base": "b427a3f9c2421a443f961007bfce66b25486643f",
+    "stable_ancestor": "4c706b5938665866ebe16944a481a7b91e3396af",
+    "description": "v3.4.2 plus upstream updates and maintainer SUSFS integration; not an unmodified stable release"
+  },
+  "modules": {
+    "url": "https://github.com/AlphaDroid-devices/kernel_oneplus_sm8550-modules.git",
+    "commit": "ec68a1a262c7e348788b167806f843828fb3c5f5",
+    "selection": "last commit on alpha-16.2 before original kernel build time; original ROM manifest not yet available"
+  },
+  "devicetrees": {
+    "url": "https://github.com/AlphaDroid-devices/kernel_oneplus_sm8550-devicetrees.git",
+    "commit": "6166b760c96147bb24ba5e13410d2b8a448087e7",
+    "selection": "last commit on alpha-16.2 before original kernel build time; original ROM manifest not yet available"
+  },
+  "toolchain": {
+    "repository": "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86",
+    "commit": "531a564ba5426707dee226eccb19f104a7af5a5f",
+    "directory": "clang-r563880c",
+    "build": "14054515",
+    "revision": "r563880c",
+    "version": "21.0.0",
+    "content_tree_sha1": "571ed3e20b5708cea1177d5072853fc5b85b6877"
+  },
+  "baseline": {
+    "kernel_release": "5.15.197-ga62400d531bc",
+    "config_sha256": "04c3f8ada60cbc544533593061a817eb898bc396cee678b83744d1c158fc9550",
+    "build_timestamp": "Tue Sep 1 23:02:16 WEST 2026",
+    "source_date_epoch": 1788300136
+  },
+  "susfs": {
+    "url": "https://gitlab.com/simonpunk/susfs4ksu.git",
+    "commit": "9359a9ce823f98ed7fec21c2e8b9f46d9740fbaa",
+    "branch": "gki-android13-5.15",
+    "version": "v2.3.0",
+    "local_patch_sha256": "a0333142ad9002f9ccb85560e7029a1dce04df68e188a8c82f9072bcdc2ebcd0",
+    "adaptation": "Replace only existing SUSFS hooks; two include/declaration hunks adapted to original 5.15.197 contexts.",
+    "allowed_kernel_paths": [
+      "drivers/input/input.c",
+      "fs/Makefile",
+      "fs/devpts/inode.c",
+      "fs/exec.c",
+      "fs/namei.c",
+      "fs/namespace.c",
+      "fs/notify/fdinfo.c",
+      "fs/open.c",
+      "fs/proc/base.c",
+      "fs/proc/bootconfig.c",
+      "fs/proc/fd.c",
+      "fs/proc/task_mmu.c",
+      "fs/proc_namespace.c",
+      "fs/read_write.c",
+      "fs/readdir.c",
+      "fs/stat.c",
+      "fs/statfs.c",
+      "fs/super.c",
+      "fs/susfs.c",
+      "include/linux/susfs.h",
+      "include/linux/susfs_def.h",
+      "kernel/kallsyms.c",
+      "kernel/reboot.c",
+      "kernel/sys.c",
+      "mm/memory.c",
+      "security/selinux/avc.c",
+      "security/selinux/hooks.c",
+      "security/selinux/selinuxfs.c"
+    ]
+  },
+  "release_policy": {
+    "kernel_release": "5.15.197-ga62400d531bc",
+    "method": "upstream scripts/setlocalversion .scmversion export override",
+    "reason": "retain installed vendor module vermagic; all modified source pins recorded separately"
+  }
+}
